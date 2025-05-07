@@ -40,8 +40,11 @@ struct MainView: View {
                 .foregroundStyle(candle.open < candle.close ? .green : .red)
             }
         }
+        // check how to make this dynamic 
+        .chartYScale(domain: 2345000...2875000)
         .frame(height:500)
         .padding(20)
+        
     }
 }
 

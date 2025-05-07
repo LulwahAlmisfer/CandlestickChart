@@ -9,32 +9,21 @@ import SwiftUI
 import Charts
 
 class ChartViewModel: ObservableObject {
-    @Published var candles: [Candle] = []
+    @Published var candles: [any CandlestickData] = []
 
     init() {
         loadCandlesFromJSON()
     }
+    
     func loadCandlesFromJSON() {
         guard let url = Bundle.main.url(forResource: "chartDymmyData", withExtension: "json") else {
             print("JSON file not found.")
             return
         }
-
         do {
             let data = try Data(contentsOf: url)
             let response = try JSONDecoder().decode(chartDummyDataResponse.self, from: data)
-            
-            self.candles = response.map {
-                let date = Date(timeIntervalSince1970: $0.x / 1000)
-
-               return Candle(
-                    time: date,
-                    open: $0.y[0],
-                    close: $0.y[3],
-                    low: $0.y[2],
-                    high: $0.y[1]
-                )
-            }
+            self.candles = response
         } catch {
             print("Failed to decode JSON: \(error)")
         }
