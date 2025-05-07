@@ -8,6 +8,7 @@
 import Foundation
 // should be the protocol with time
 struct Candle: Hashable,Codable {
+    let time: Date
     let open: Double
     let close: Double
     let low: Double

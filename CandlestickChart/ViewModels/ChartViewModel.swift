@@ -25,9 +25,10 @@ class ChartViewModel: ObservableObject {
             let response = try JSONDecoder().decode(chartDummyDataResponse.self, from: data)
             
             self.candles = response.map {
-                Candle(
-                    // If your Candle model has `time`, uncomment this line:
-                    // time: $0.x / 1000, // from milliseconds to seconds
+                let date = Date(timeIntervalSince1970: $0.x / 1000)
+
+               return Candle(
+                    time: date,
                     open: $0.y[0],
                     close: $0.y[3],
                     low: $0.y[2],

@@ -31,7 +31,7 @@ struct MainView: View {
             ForEach(viewModel.candles.indices, id: \.self) { index in
                 let candle = viewModel.candles[index]
                 CandlestickMark(
-                    x: .value("Index", index),
+                    x: .value("Index", candle.time),
                     low: .value("Low", candle.low),
                     high: .value("High", candle.high),
                     open: .value("Open", candle.open),
@@ -40,7 +40,8 @@ struct MainView: View {
                 .foregroundStyle(candle.open < candle.close ? .green : .red)
             }
         }
-        .padding(50)
+        .frame(height:500)
+        .padding(20)
     }
 }
 
