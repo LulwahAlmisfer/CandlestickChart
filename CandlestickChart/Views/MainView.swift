@@ -25,69 +25,80 @@ struct MainView: View {
     
     
     var body: some View {
-        
-        Chart {
-            ForEach(viewModel.candles.indices, id: \.self) { index in
-                let candle = viewModel.candles[index]
-                CandlestickMark(
-                    x: .value("Time", candle.date),
-                    low: .value("Low", candle.low),
-                    high: .value("High", candle.high),
-                    open: .value("Open", candle.open),
-                    close: .value("Close", candle.close)
-                )
-                .foregroundStyle(candle.open < candle.close ? .green : .red)
-            }
-            
-            // TODO: what are series? 🔴
-            if let emaCandles = viewModel.candles as? [emaCrossoverResultsIos] {
-                ForEach(emaCandles, id: \.date) { candle in
-                    LineMark(x: .value("Time", candle.date), y: .value("EMA(12)", candle.shortEMA),
-                             series: .value("EMA(12)", "A")
+        HStack(alignment: .top){
+            Chart {
+                ForEach(viewModel.candles.indices, id: \.self) { index in
+                    let candle = viewModel.candles[index]
+                    CandlestickMark(
+                        x: .value("Time", candle.date),
+                        low: .value("Low", candle.low),
+                        high: .value("High", candle.high),
+                        open: .value("Open", candle.open),
+                        close: .value("Close", candle.close)
                     )
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(candle.open < candle.close ? .green : .red)
                 }
                 
-                ForEach(emaCandles, id: \.date) { candle in
-                    LineMark(x: .value("Time", candle.date), y: .value("EMA(26)", candle.longEMA),
-                             series: .value("EMA(26)", "B")
-                    )
-                    .foregroundStyle(.blue)
- 
-                }
-                
-                ForEach(emaCandles, id: \.date) { candle in
-                    if let signal = candle.signal {
-                        PointMark(
-                            x: .value("Time", candle.date),
-                            y: .value("High", candle.longEMA)
+                if let emaCandles = viewModel.candles as? [emaCrossoverResultsIos] {
+                    ForEach(emaCandles, id: \.date) { candle in
+                        LineMark(x: .value("Time", candle.date), y: .value("EMA(12)", candle.shortEMA),
+                                 series: .value("EMA(12)", "A")
                         )
-                        .foregroundStyle(.clear)
-                        .annotation(position: signal == .buyUnfiltered ? .bottom : .top) {
-                            SignalIconView(signal: signal)
+                        .foregroundStyle(.orange)
+                    }
+                    
+                    ForEach(emaCandles, id: \.date) { candle in
+                        LineMark(x: .value("Time", candle.date), y: .value("EMA(26)", candle.longEMA),
+                                 series: .value("EMA(26)", "B")
+                        )
+                        .foregroundStyle(.blue)
+                        
+                    }
+                    
+                    ForEach(emaCandles, id: \.date) { candle in
+                        if let signal = candle.signal {
+                            PointMark(
+                                x: .value("Time", candle.date),
+                                y: .value("High", candle.longEMA)
+                            )
+                            .foregroundStyle(.clear)
+                            .annotation(position: signal == .buyUnfiltered ? .bottom : .top) {
+                                SignalIconView(signal: signal)
+                            }
+                        }
+                    }
+                    
+                    ForEach(emaCandles, id: \.date) { candle in
+                        LineMark(x: .value("Time", candle.date), y: .value("SMA(50)", candle.trendFilterMA),
+                                 series: .value("SMA(50)", "C")
+                        )
+                        .foregroundStyle(.gray)
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [6]))
+                    }
+                    
+                }
+            }
+            .chartXAxis { // TODO: clean with modif
+                AxisMarks(values: .automatic(desiredCount: 6)) { value in
+                    if let date = value.as(Date.self) {
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel {
+                            Text(date.formatted(.dateTime.month(.abbreviated).year()))
                         }
                     }
                 }
-
-                ForEach(emaCandles, id: \.date) { candle in
-                    LineMark(x: .value("Time", candle.date), y: .value("SMA(50)", candle.trendFilterMA),
-                             series: .value("SMA(50)", "C")
-                    )
-                    .foregroundStyle(.gray)
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [6]))
-                }
-                
             }
+            .chartYScale(domain: yRange)
+            .frame(height:500)
+            .padding(30)
+            SignalLegendView()
+            
         }
-        .chartYScale(domain: yRange)
-        .frame(height:500)
-        .padding(30)
-        
     }
 }
 
 #Preview {
     MainView()
 }
-
 
