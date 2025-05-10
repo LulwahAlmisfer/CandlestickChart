@@ -16,9 +16,20 @@ struct emaCrossoverResultsIos: Codable,CandlestickData {
     let shortEMA: Double
     let longEMA: Double
     let trendFilterMA: Double
-    let signalUnfiltered: String?
-    let signalFiltered: String?
+    let signalUnfiltered, signalFiltered: Signal
 
+    var signal: SignalType? {
+        if signalFiltered == .sell {
+            return .sellFiltered
+        } else if signalUnfiltered == .sell {
+            return .sellUnfiltered
+        } else if signalUnfiltered == .buy {
+            return .buyUnfiltered
+        } else {
+          return  nil
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case date = "Date"
         case open = "Open"
@@ -54,10 +65,16 @@ struct emaCrossoverResultsIos: Codable,CandlestickData {
         self.shortEMA = try container.decode(Double.self, forKey: .shortEMA)
         self.longEMA = try container.decode(Double.self, forKey: .longEMA)
         self.trendFilterMA = try container.decode(Double.self, forKey: .trendFilterMA)
-        self.signalUnfiltered = try container.decodeIfPresent(String.self, forKey: .signalUnfiltered)
-        self.signalFiltered = try container.decodeIfPresent(String.self, forKey: .signalFiltered)
+        self.signalUnfiltered = try container.decode(Signal.self, forKey: .signalUnfiltered)
+        self.signalFiltered = try container.decode(Signal.self, forKey: .signalFiltered)
     }
     
+}
+
+enum Signal: String, Codable {
+    case buy = "buy"
+    case hold = "hold"
+    case sell = "sell"
 }
 
 typealias emaCrossoverResultsIosResponse = [emaCrossoverResultsIos]

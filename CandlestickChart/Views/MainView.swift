@@ -53,7 +53,30 @@ struct MainView: View {
                              series: .value("EMA(26)", "B")
                     )
                     .foregroundStyle(.blue)
+ 
                 }
+                
+                ForEach(emaCandles, id: \.date) { candle in
+                    if let signal = candle.signal {
+                        PointMark(
+                            x: .value("Time", candle.date),
+                            y: .value("High", candle.longEMA)
+                        )
+                        .foregroundStyle(.clear)
+                        .annotation(position: signal == .buyUnfiltered ? .bottom : .top) {
+                            SignalIconView(signal: signal)
+                        }
+                    }
+                }
+
+                ForEach(emaCandles, id: \.date) { candle in
+                    LineMark(x: .value("Time", candle.date), y: .value("SMA(50)", candle.trendFilterMA),
+                             series: .value("SMA(50)", "C")
+                    )
+                    .foregroundStyle(.gray)
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [6]))
+                }
+                
             }
         }
         .chartYScale(domain: yRange)
@@ -66,3 +89,5 @@ struct MainView: View {
 #Preview {
     MainView()
 }
+
+
