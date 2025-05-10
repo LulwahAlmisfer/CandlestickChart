@@ -11,7 +11,7 @@ struct chartDummyData: Codable, CandlestickData {
     let x: Double
     let y: [Double]
 
-    var time: Date {
+    var date: Date {
         Date(timeIntervalSince1970: x / 1000)
     }
 

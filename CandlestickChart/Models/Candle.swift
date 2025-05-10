@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CandlestickData {
-    var time: Date { get }
+    var date: Date { get }
     var open: Double { get }
     var close: Double { get }
     var low: Double { get }

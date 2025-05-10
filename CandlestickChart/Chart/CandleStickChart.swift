@@ -31,6 +31,6 @@ struct CandlestickMark<X: Plottable, Y: Plottable>: ChartContent {
     
     var body: some ChartContent {
         RectangleMark(x: x, yStart: low, yEnd: high, width: 1)
-        RectangleMark(x: x, yStart: open, yEnd: close, width: 6)
+        RectangleMark(x: x, yStart: open, yEnd: close, width: 3)
     }
 }

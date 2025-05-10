@@ -12,10 +12,11 @@ class ChartViewModel: ObservableObject {
     @Published var candles: [any CandlestickData] = []
 
     init() {
-        loadCandlesFromJSON()
+      //  loadCandlesChartDymmyDataFromJSON()
+        loadEma_crossover_results_iosFromJSON()
     }
     
-    func loadCandlesFromJSON() {
+    func loadCandlesChartDymmyDataFromJSON() {
         guard let url = Bundle.main.url(forResource: "chartDymmyData", withExtension: "json") else {
             print("JSON file not found.")
             return
@@ -23,6 +24,20 @@ class ChartViewModel: ObservableObject {
         do {
             let data = try Data(contentsOf: url)
             let response = try JSONDecoder().decode(chartDummyDataResponse.self, from: data)
+            self.candles = response
+        } catch {
+            print("Failed to decode JSON: \(error)")
+        }
+    }
+    
+    func loadEma_crossover_results_iosFromJSON(){
+        guard let url = Bundle.main.url(forResource: "ema_crossover_results_ios", withExtension: "json") else {
+            print("JSON file not found.")
+            return
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let response = try JSONDecoder().decode(emaCrossoverResultsIosResponse.self, from: data)
             self.candles = response
         } catch {
             print("Failed to decode JSON: \(error)")
